@@ -65,7 +65,9 @@ Proof of concept nostr typescript event parser to extract metadata, and aid in r
       hashtag: '#Infowars',
       url: 'http://nostr.hashtag.com/search/#Infowars'
     },
-    { hashtag: '#Zap', url: 'http://nostr.hashtag.com/search/#Zap' },
+    {
+      hashtag: '#Zap',
+      url: 'http://nostr.hashtag.com/search/#Zap' },
     {
       hashtag: '#Bitcoin',
       url: 'http://nostr.hashtag.com/search/#Bitcoin'
