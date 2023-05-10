@@ -1,6 +1,19 @@
 # Nostr Event Parser
 
-Proof of concept nostr typescript event parser to extract data and aid in rendering html or data processing.
+Proof of concept nostr typescript event parser to extract metadata, and aid in rendering html or general data processing.
+
+## Features
+* Extract hashtags (and convert to html a tags)
+* Extract mentions (and convert to html a tags)
+* Extract urls (fetch content-type, preview metadata, and convert to html a tags)
+* Custom URL handlers
+
+## Future
+* Refactor into a library
+* Query relays for mention pubkey kind0 metadata (possible caching)
+* Handle different event kinds
+* Support for [NIP-27 - Text Note References](https://github.com/nostr-protocol/nips/blob/4208652dc7a39c63c39559b13c656ec30400fcba/27.md)
+* Ideally more information on image urls like dimentions
 
 ### Example Input
 ```json
@@ -40,7 +53,7 @@ Proof of concept nostr typescript event parser to extract data and aid in render
     created_at: 1683732497,
     sig: 'b5f75cb1009594b294c07cd9e4b770f16c3f5a95095552cd2745ba71c50a1c11393c63745412692eb17453e43ff02fdbef9b69752280ccb60b7ba20912d3d938',
     kind: 1,
-    tags: [ [Array], [Array], [Array] ]
+    tags: [ ["p","PUBKEY1"], ["g","blabla"], ["p","PUBKEY2"] ]
   },
   marked_content: 'A Credit Crunch Is <a href="http://nostr.profile.com/pubkey/PUBKEY1">PUBKEY1</a> InevitableRigged <a href="http://nostr.profile.com/pubkey/PUBKEY2">PUBKEY2</a> System! <a href="https://i.stack.imgur.com/Ge37s.png">https://i.stack.imgur.com/Ge37s.png</a> <a href="http://nostr.hashtag.com/search/#CreditCrunch">#CreditCrunch</a>📉 <a href="http://nostr.hashtag.com/search/#Infowars">#Infowars</a>👊 <a href="https://www.infowars.com/posts/a-credit-crunch-is-inevitable">https://www.infowars.com/posts/a-credit-crunch-is-inevitable</a> <a href="http://nostr.hashtag.com/search/#Zap">#Zap</a> to support, DM to suggest new feeds.  <a href="http://nostr.hashtag.com/search/#Bitcoin">#Bitcoin</a> price is now: $28,111.64',
   hashtags: [
