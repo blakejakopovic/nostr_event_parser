@@ -55,7 +55,7 @@ Proof of concept nostr typescript event parser to extract metadata, and aid in r
     kind: 1,
     tags: [ ["p","PUBKEY1"], ["g","blabla"], ["p","PUBKEY2"] ]
   },
-  marked_content: 'A Credit Crunch Is <a href="http://nostr.profile.com/pubkey/PUBKEY1">PUBKEY1</a> InevitableRigged <a href="http://nostr.profile.com/pubkey/PUBKEY2">PUBKEY2</a> System! <a href="https://i.stack.imgur.com/Ge37s.png">https://i.stack.imgur.com/Ge37s.png</a> <a href="http://nostr.hashtag.com/search/#CreditCrunch">#CreditCrunch</a>📉 <a href="http://nostr.hashtag.com/search/#Infowars">#Infowars</a>👊 <a href="https://www.infowars.com/posts/a-credit-crunch-is-inevitable">https://www.infowars.com/posts/a-credit-crunch-is-inevitable</a> <a href="http://nostr.hashtag.com/search/#Zap">#Zap</a> to support, DM to suggest new feeds.  <a href="http://nostr.hashtag.com/search/#Bitcoin">#Bitcoin</a> price is now: $28,111.64',
+  html_content: 'A Credit Crunch Is <a href="http://nostr.profile.com/pubkey/PUBKEY1">PUBKEY1</a> InevitableRigged <a href="http://nostr.profile.com/pubkey/PUBKEY2">PUBKEY2</a> System! <a href="https://i.stack.imgur.com/Ge37s.png">https://i.stack.imgur.com/Ge37s.png</a> <a href="http://nostr.hashtag.com/search/#CreditCrunch">#CreditCrunch</a>📉 <a href="http://nostr.hashtag.com/search/#Infowars">#Infowars</a>👊 <a href="https://www.infowars.com/posts/a-credit-crunch-is-inevitable">https://www.infowars.com/posts/a-credit-crunch-is-inevitable</a> <a href="http://nostr.hashtag.com/search/#Zap">#Zap</a> to support, DM to suggest new feeds.  <a href="http://nostr.hashtag.com/search/#Bitcoin">#Bitcoin</a> price is now: $28,111.64',
   hashtags: [
     {
       hashtag: '#CreditCrunch',

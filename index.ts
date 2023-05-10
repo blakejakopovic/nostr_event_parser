@@ -53,7 +53,7 @@ interface ParsedMention {
 
 interface ParsedNostrEvent {
   event: NostrEvent;
-  marked_content: string;
+  html_content: string;
   hashtags: ParsedHashtag[];
   mentions: ParsedMention[];
   urls: ParsedUrl[];
@@ -62,7 +62,7 @@ interface ParsedNostrEvent {
 function createDefaultResult(event: NostrEvent): ParsedNostrEvent {
   return {
     event: event,
-    marked_content: event.content,
+    html_content: event.content,
     hashtags: [],
     mentions: [],
     urls: []
@@ -82,7 +82,7 @@ function extractHashtags(parsed_event: ParsedNostrEvent): ParsedNostrEvent {
       url: hashtag_url
     });
 
-    parsed_event.marked_content = parsed_event.marked_content.replace(match[0], `<a href="${hashtag_url}">${match[0]}</a>`);
+    parsed_event.html_content = parsed_event.html_content.replace(match[0], `<a href="${hashtag_url}">${match[0]}</a>`);
   }
   parsed_event.hashtags = parsed_hashtags
 
@@ -129,7 +129,7 @@ function extractMentions(parsed_event: ParsedNostrEvent): ParsedNostrEvent {
         display_name: null
     });
 
-    parsed_event.marked_content = parsed_event.marked_content.replace(match[0], `<a href="${mention_url}">${pubkey}</a>`);
+    parsed_event.html_content = parsed_event.html_content.replace(match[0], `<a href="${mention_url}">${pubkey}</a>`);
   }
   parsed_event.mentions = parsed_mentions
 
@@ -195,7 +195,7 @@ async function extractUrls(parsed_event: ParsedNostrEvent): Promise<ParsedNostrE
             image: urlMetadata.image ?? null
         });
 
-        parsed_event.marked_content = parsed_event.marked_content.replace(url, `<a href="${url}">${url}</a>`);
+        parsed_event.html_content = parsed_event.html_content.replace(url, `<a href="${url}">${url}</a>`);
     }
     parsed_event.urls = parsed_urls;
 
