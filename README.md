@@ -25,21 +25,7 @@ Proof of concept nostr typescript event parser to extract metadata, and aid in r
     "created_at": 1683732497,
     "sig": "b5f75cb1009594b294c07cd9e4b770f16c3f5a95095552cd2745ba71c50a1c11393c63745412692eb17453e43ff02fdbef9b69752280ccb60b7ba20912d3d938",
     "kind": 1,
-    "tags":
-    [
-        [
-            "p",
-            "PUBKEY1"
-        ],
-        [
-            "g",
-            "blabla"
-        ],
-        [
-            "p",
-            "PUBKEY2"
-        ]
-    ]
+    "tags": [ ["p","PUBKEY1"], ["g","blabla"], ["p","PUBKEY2"] ]
 }
 ```
 
