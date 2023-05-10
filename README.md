@@ -11,6 +11,7 @@ Proof of concept nostr typescript event parser to extract metadata, and aid in r
 ## Future
 * Refactor into a library
 * Query relays for mention pubkey kind0 metadata (possible caching)
+* Root event and reply event lookup (with optional pubkey lookup)
 * Handle different event kinds
 * Support for [NIP-27 - Text Note References](https://github.com/nostr-protocol/nips/blob/4208652dc7a39c63c39559b13c656ec30400fcba/27.md)
 * Ideally more information on image urls like dimentions
