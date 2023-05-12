@@ -3,6 +3,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@nostr-dev-kit/ndk": "^0.3.141",
     "nostr-tools": "^1.10.1"
   }
 }

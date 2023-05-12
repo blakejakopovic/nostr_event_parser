@@ -1,6 +1,11 @@
 import { nip19, nip27 } from "nostr-tools";
 
-const event_raw: string = '{"pubkey":"957dd3687817abb53e01635fb4fc1c029c2cd49202ec82f416ec240601b371d8","content":"A Credit Crunch Is #[0] InevitableRigged #[1] System! https://i.stack.imgur.com/Ge37s.png #CreditCrunch📉 #Infowars👊 nostr:nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p https://www.infowars.com/posts/a-credit-crunch-is-inevitable #Zap to support, DM to suggest new feeds. nostr:npub108pv4cg5ag52nq082kd5leu9ffrn2gdg6g4xdwatn73y36uzplmq9uyev6!\\n\\nnostr:note1gmtnz6q2m55epmlpe3semjdcq987av3jvx4emmjsa8g3s9x7tg4sclreky #Bitcoin price is now: $28,111.64 nostr:naddr1qqrxyctwv9hxzq3q80cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsxpqqqp65wqfwwaehxw309aex2mrp0yhxummnw3ezuetcv9khqmr99ekhjer0d4skjm3wv4uxzmtsd3jjucm0d5q3vamnwvaz7tmwdaehgu3wvfskuctwvyhxxmmd0zfmwx","id":"89161c22883446d7d774fb288db216c2d20f799dbf3e9e4a140f4319094d1a6f","created_at":1683732497,"sig":"b5f75cb1009594b294c07cd9e4b770f16c3f5a95095552cd2745ba71c50a1c11393c63745412692eb17453e43ff02fdbef9b69752280ccb60b7ba20912d3d938","kind":1,"tags":[["p", "PUBKEY1"],["g", "blabla"],["p", "PUBKEY2"], ["e", "ROOT_EVENT_ID", "root"], ["e", "REPLY_EVENT_ID", "reply"], ["e", "RANDOM_EVENT_ID"], ["r", "wss://relay.nostr.com"]]}';
+import NDK, { NDKUserProfile, GetUserParams, NDKFilter, NDKEvent } from "@nostr-dev-kit/ndk"
+
+// Create a new NDK instance with explicit relays
+const ndk = new NDK({ explicitRelayUrls: ["wss://nos.lol", "wss://relay.damus.io"] });
+
+const event_raw: string = '{"pubkey":"957dd3687817abb53e01635fb4fc1c029c2cd49202ec82f416ec240601b371d8","content":"A Credit Crunch Is #[0] InevitableRigged #[1] System! https://i.stack.imgur.com/Ge37s.png #CreditCrunch📉 #Infowars👊 nostr:nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p https://www.infowars.com/posts/a-credit-crunch-is-inevitable #Zap to support, DM to suggest new feeds. nostr:npub108pv4cg5ag52nq082kd5leu9ffrn2gdg6g4xdwatn73y36uzplmq9uyev6!\\n\\nnostr:note1gmtnz6q2m55epmlpe3semjdcq987av3jvx4emmjsa8g3s9x7tg4sclreky #Bitcoin price is now: $28,111.64 nostr:naddr1qqwxxatnw3hk6tt4wfkz6cm4wd6x7erfv9kz6er0d4skjmnnqyghwumn8ghj7mn0wd68ytnhd9hx2tcpremhxue69uhkummnw3ez6ur4vgh8wetvd3hhyer9wghxuet59uq3wamnwvaz7tmjv4kxz7fwdehhxarj9e3xzmny9uqsuamnwvaz7tmwdaejumr0dshsz9thwden5te0wfjkccte9ejxzmt4wvhxjme0qgsvt7mwejrkupzcu0k2nyvwxuxte5mkjqw9s3s9ztl9x7jxukxr3wcrqsqqqa28mh8z8r","id":"89161c22883446d7d774fb288db216c2d20f799dbf3e9e4a140f4319094d1a6f","created_at":1683732497,"sig":"b5f75cb1009594b294c07cd9e4b770f16c3f5a95095552cd2745ba71c50a1c11393c63745412692eb17453e43ff02fdbef9b69752280ccb60b7ba20912d3d938","kind":1,"tags":[["p", "b2dd40097e4d04b1a56fb3b65fc1d1aaf2929ad30fd842c74d68b9908744495b"],["g", "blabla"],["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"], ["e", "ROOT_EVENT_ID", "root"], ["e", "REPLY_EVENT_ID", "reply"], ["e", "RANDOM_EVENT_ID"], ["r", "wss://relay.nostr.com"]]}';
 
 const hashtag_regex = /\#[a-zA-Z][0-9a-zA-Z_]*/g;
 const hashtag_url_pattern = "http://nostr.hashtag.com/search/%s"
@@ -17,6 +22,8 @@ const note_url_pattern = "http://nostr.event.com/event/%s"
 // Note: These hit the network which make it slower
 const fetch_url_content_type = true
 const fetch_url_metadata = true
+const fetch_mention_profile = true
+const fetched_referenced_event = true
 
 interface NostrEvent {
   pubkey: string;
@@ -58,6 +65,10 @@ interface ParsedMention {
   relays: string[];
   name: null | string;
   display_name: null | string;
+  nip05: null | string;
+  about: null | string;
+  image: null | string;
+  banner: null | string;
   url: null | string;
 }
 
@@ -74,6 +85,7 @@ interface ParsedEventAddress {
   pubkey: null | string;
   kind: null | number;
   identifier: null | string;
+  event: null | NDKEvent;
 }
 
 interface ParsedNostrEvent {
@@ -136,7 +148,7 @@ function getNthTag(tag: string, event: NostrEvent, n: number): string | null {
 }
 
 // Deprecated: NIP-08
-function extractMentions(parsed_event: ParsedNostrEvent): ParsedNostrEvent {
+async function extractMentions(parsed_event: ParsedNostrEvent): Promise<ParsedNostrEvent> {
   const event_content = parsed_event.event.content;
   const parsed_mentions: ParsedMention[] = [];
 
@@ -151,13 +163,23 @@ function extractMentions(parsed_event: ParsedNostrEvent): ParsedNostrEvent {
 
     let mention_url = mention_url_pattern.replace('%s', pubkey) // should fallback to null
 
+    let profile = null;
+    if (fetch_mention_profile) {
+      profile = await fetchPubkeyProfile({hexpubkey: pubkey})
+      // console.log(profile)
+    }
+
     parsed_mentions.push({
         source: match[0],
         pubkey: pubkey,
         relays: [],
         url: mention_url,
-        name: null,
-        display_name: null
+        name: profile?.name ?? null,
+        display_name: profile?.displayName ?? null,
+        nip05: profile?.nip05 ?? null,
+        about: profile?.about ?? null,
+        image: profile?.image ?? null,
+        banner: profile?.banner ?? null
     });
 
     parsed_event.html_content = parsed_event.html_content.replace(match[0], `<a href="${mention_url}">${pubkey}</a>`);
@@ -233,7 +255,7 @@ async function extractUrls(parsed_event: ParsedNostrEvent): Promise<ParsedNostrE
     return parsed_event;
 }
 
-function extractTextNoteReferences(parsed_event: ParsedNostrEvent): ParsedNostrEvent {
+async function extractTextNoteReferences(parsed_event: ParsedNostrEvent): Promise<ParsedNostrEvent> {
 
   const matches = nip27.matchAll(parsed_event.event.content);
 
@@ -251,14 +273,37 @@ function extractTextNoteReferences(parsed_event: ParsedNostrEvent): ParsedNostrE
       var mention_url = mention_url_pattern.replace('%s', match.value);
       parsed_event.html_content = parsed_event.html_content.replace(match.uri, `<a href="${mention_url}">${match.value}</a>`);
 
-      parsed_mentions.push({
+      if (fetch_mention_profile) {
+        // TODO: Maybe we can suggest NDK to use the relays here
+        let profile = await fetchPubkeyProfile({npub: match.value})
+        // console.log(profile)
+
+        parsed_mentions.push({
+          source: match.uri,
+          pubkey: match.value,
+          relays: pointer.relays ?? [],
+          url: mention_url,
+          name: profile?.name ?? null,
+          display_name: profile?.displayName ?? null,
+          nip05: profile?.nip05 ?? null,
+          about: profile?.about ?? null,
+          image: profile?.image ?? null,
+          banner: profile?.banner ?? null,
+        });
+      } else {
+        parsed_mentions.push({
           source: match.uri,
           pubkey: match.value,
           relays: pointer.relays ?? [],
           url: mention_url,
           name: null,
-          display_name: null
-      });
+          display_name: null,
+          nip05: null,
+          about: null,
+          image: null,
+          banner: null,
+        });
+      }
 
     } else if (match.decoded.type == "nprofile") {
 
@@ -268,14 +313,36 @@ function extractTextNoteReferences(parsed_event: ParsedNostrEvent): ParsedNostrE
       var mention_url = mention_url_pattern.replace('%s', match.value);
       parsed_event.html_content = parsed_event.html_content.replace(match.uri, `<a href="${mention_url}">${match.value}</a>`);
 
-      parsed_mentions.push({
+      if (fetch_mention_profile) {
+        // TODO: Maybe we can suggest NDK to use the relays here
+        let profile = await fetchPubkeyProfile({hexpubkey: pointer.pubkey})
+
+        parsed_mentions.push({
+          source: match.uri,
+          pubkey: match.value,
+          relays: pointer.relays ?? [],
+          url: mention_url,
+          name: profile?.name ?? null,
+          display_name: profile?.displayName ?? null,
+          nip05: profile?.nip05 ?? null,
+          about: profile?.about ?? null,
+          image: profile?.image ?? null,
+          banner: profile?.banner ?? null,
+        });
+      } else {
+        parsed_mentions.push({
           source: match.uri,
           pubkey: match.value,
           relays: pointer.relays ?? [],
           url: mention_url,
           name: null,
-          display_name: null
-      });
+          display_name: null,
+          nip05: null,
+          about: null,
+          image: null,
+          banner: null,
+        });
+      }
 
     } else if (match.decoded.type == "note") {
 
@@ -298,11 +365,30 @@ function extractTextNoteReferences(parsed_event: ParsedNostrEvent): ParsedNostrE
       let {type, data} = nip19.decode(match.value)
       const pointer = data as nip19.AddressPointer
 
+      // let event: NostrEvent | null = null;
+      // if (fetched_referenced_event) {
+      //   const filter: NDKFilter = { kinds: [pointer.kind], authors: [pointer.pubkey] };
+
+      //   // Will return only the first event
+      //   let event_data = await ndk.fetchEvent(filter);
+
+      //   event = {
+      //     pubkey: event_data?.pubkey,
+      //     content: event_data?.content,
+      //     id: event_data?.id?,
+      //     created_at: event_data?.created_at?
+      //     sig: event_data?.sig?,
+      //     kind: event_data?.kind?,
+      //     tags: event_data?.tags?
+      //   }
+      // }
+
       parsed_event_addresses.push({
           source: match.uri,
           pubkey: pointer.pubkey ?? null,
           kind: pointer.kind ?? null,
           identifier: pointer.identifier ?? null,
+          event: null,
       })
 
       var url = note_url_pattern.replace('%s', match.value);
@@ -370,22 +456,31 @@ function extractRTags(parsed_event: ParsedNostrEvent): ParsedNostrEvent {
   return parsed_event
 }
 
+async function fetchPubkeyProfile(params: GetUserParams) {
+  const user = ndk.getUser(params);
+  await user.fetchProfile();
+
+  return user.profile;
+}
+
 let event_object: NostrEvent = JSON.parse(event_raw);
 let parsed_event: ParsedNostrEvent = createDefaultResult(event_object);
 
 
 async function main() {
+  await ndk.connect();
+
   extractETags(parsed_event);
   extractRTags(parsed_event);
-  extractMentions(parsed_event);
-  extractTextNoteReferences(parsed_event);
+  await extractMentions(parsed_event);
+  await extractTextNoteReferences(parsed_event);
   extractHashtags(parsed_event);
   await extractUrls(parsed_event);
 
   // TODO: Convert \n to <br/> for html?
   // TODO: Detect Markdown
 
-  console.dir(parsed_event, {depth: null, colors: true, maxArrayLength: null});
+  console.dir(parsed_event, {depth: null, colors: true, maxArrayLength: null} );
 }
 
 main();
